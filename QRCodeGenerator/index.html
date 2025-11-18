@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QR Code with Downloadable White Border</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  body { 
+    font-family: Arial; 
+    text-align: center;
+    background: #f0f0f0;
+    margin: 50px;
+  }
+  h1 {
+    color: #333;
+    margin-bottom: 20px;
+  }
+  input { 
+    padding: 12px; 
+    width: 320px; 
+    font-size: 16px; 
+    border-radius: 8px; 
+    border: 1px solid #ccc;
+    outline: none;
+  }
+  input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0,123,255,0.5);
+  }
+  #qrcode-wrapper {
+    width: 220px; 
+    height: 220px;
+    margin: 20px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  button { 
+    padding: 10px 20px; 
+    font-size: 16px; 
+    cursor: pointer; 
+    border-radius: 8px;
+    border: none;
+    background: #007bff;
+    color: #fff;
+    transition: 0.2s;
+  }
+  button:hover {
+    background: #0056b3;
+  }
+</style>
+</head>
+<body>
+
+<h1>QR Code Generator</h1>
+<input type="text" id="text-input" placeholder="Type anything here...">
+<div id="qrcode-wrapper"></div>
+<button id="download-btn" style="display:none;">Download QR</button>
+
+<script>
+const input = document.getElementById("text-input");
+const qrWrapper = document.getElementById("qrcode-wrapper");
+const downloadBtn = document.getElementById("download-btn");
+
+let qrcode;
+
+input.addEventListener("input", () => {
+  const text = input.value.trim();
+  qrWrapper.innerHTML = "";
+
+  if (text) {
+    // create a canvas instead of img
+    qrcode = new QRCode(qrWrapper, {
+      text: text,
+      width: 180, // smaller so we can add white border
+      height: 180,
+      colorDark: "#000000",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+
+    downloadBtn.style.display = "inline-block";
+  } else {
+    downloadBtn.style.display = "none";
+  }
+});
+
+// download with white border baked in
+downloadBtn.addEventListener("click", () => {
+  const canvas = qrWrapper.querySelector("canvas");
+  if (!canvas) return;
+
+  const border = 10; // pixels of white border
+  const newCanvas = document.createElement("canvas");
+  newCanvas.width = canvas.width + border * 2;
+  newCanvas.height = canvas.height + border * 2;
+
+  const ctx = newCanvas.getContext("2d");
+  ctx.fillStyle = "#ffffff"; // white border
+  ctx.fillRect(0, 0, newCanvas.width, newCanvas.height);
+  ctx.drawImage(canvas, border, border);
+
+  const link = document.createElement("a");
+  link.href = newCanvas.toDataURL("image/png");
+  link.download = "qr_code.png";
+  link.click();
+});
+</script>
+
+</body>
+</html>
