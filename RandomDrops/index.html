@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Random Drops Mod</title>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <style>
+    body {
+      background-color: #000;
+      color: #00BFFF;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      margin: 0;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px #00BFFF;
+    }
+
+    p, li {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+
+    ul {
+      text-align: left;
+      margin-bottom: 30px;
+    }
+
+    .button {
+      background-color: #FF0000;
+      color: #fff;
+      padding: 14px 28px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: 0.3s ease;
+      display: inline-block;
+      box-shadow: 0 0 10px #FF0000;
+      margin-bottom: 20px;
+    }
+
+    .button:hover {
+      background-color: #000;
+      border: 2px solid #FF0000;
+      transform: scale(1.05);
+      box-shadow: 0 0 20px #FF0000;
+    }
+
+    select {
+      padding: 10px 14px;
+      border-radius: 6px;
+      border: 1px solid #00BFFF;
+      background-color: #000;
+      color: #00BFFF;
+      font-size: 16px;
+      margin-bottom: 15px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .feature-card {
+      background: rgba(0, 191, 255, 0.1);
+      border: 1px solid #00BFFF;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 15px 0;
+      text-align: left;
+      width: 100%;
+      max-width: 500px;
+      box-sizing: border-box;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 15px #00BFFF;
+    }
+
+    /* Center the cards horizontally */
+    .cards-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    /* Modal Styles */
+    .modal-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(5px);
+      z-index: 100;
+    }
+
+    .modal {
+      background-color: #000;
+      border: 2px solid #00BFFF;
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center; /* Centered modal text */
+      box-shadow: 0 0 20px #00BFFF;
+      position: relative;
+    }
+
+    .modal h2 {
+      margin-top: 0;
+      text-shadow: 0 0 8px #00BFFF;
+      font-size: 1.8rem;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #FF0000;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .close-btn:hover {
+      transform: scale(1.2);
+    }
+
+    .checkbox-label {
+      display: flex;
+      justify-content: flex-start; /* left aligned */
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .download-btn {
+      width: 100%;
+      padding: 12px 0;
+      background-color: #FF0000;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 18px;
+      cursor: pointer;
+      text-align: center;
+      box-shadow: 0 0 10px #FF0000;
+      transition: 0.3s ease;
+    }
+
+    .download-btn:hover {
+      background-color: #000;
+      border: 2px solid #FF0000;
+      box-shadow: 0 0 20px #FF0000;
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 2rem; }
+      p, li { font-size: 1rem; }
+      .feature-card { max-width: 90%; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="content">
+    <h1>Random Drops Mod</h1>
+
+    <p>Turn every block into a surprise! This mod randomizes all block drops—anything can drop anything, from items to blocks you’d never expect.</p>
+    <p>Not feeling the current drops? Just use <code>/redrop</code> to reshuffle them instantly and keep the chaos going! 🎲</p>
+
+    <button class="button" id="openModal">Download Mod</button>
+
+    <div class="cards-container">
+      <div class="feature-card">
+        <strong>Features:</strong>
+        <ul>
+          <li>Randomizes all block drops in your world.</li>
+          <li>Use <code>/redrop</code> anytime to reshuffle drops.</li>
+          <li>Lightweight and easy to install.</li>
+        </ul>
+      </div>
+
+      <div class="feature-card">
+        <strong>Notes:</strong>
+        <ul>
+          <li>Server side mod (only necessary on client if playing singleplayer).</li>
+          <li>Self-contained mod, no extra dependencies needed.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-bg" id="modalBg">
+    <div class="modal">
+      <span class="close-btn" id="closeModal">&times;</span>
+      <h2>Download Options</h2>
+
+      <label for="version">Game Version</label>
+      <select id="version">
+        <option value="https://misc.ixvipcs.com/RandomDrops-1.0.2-1.21.11.jar" selected>1.0.2 - 1.21.11</option>
+        <option value="https://misc.ixvipcs.com/RandomDrops-1.0.1-1.21.11-beta.jar">1.0.1 - 1.21.11-beta</option>
+        <option value="https://misc.ixvipcs.com/RandomDrops-1.0.0-1.21.11-beta.jar">1.0.0 - 1.21.11-beta</option>
+      </select>
+
+      <label for="platform">Platform</label>
+      <select id="platform" disabled>
+        <option value="fabric" selected>Fabric</option>
+      </select>
+
+      <label class="checkbox-label">
+        <input type="checkbox" id="includeBeta"> Include beta versions
+      </label>
+
+      <button class="download-btn" id="modalDownload">Download</button>
+    </div>
+  </div>
+
+  <script>
+    const openModalBtn = document.getElementById('openModal');
+    const modalBg = document.getElementById('modalBg');
+    const closeModalBtn = document.getElementById('closeModal');
+    const downloadBtn = document.getElementById('modalDownload');
+    const versionSelect = document.getElementById('version');
+    const includeBeta = document.getElementById('includeBeta');
+    const content = document.getElementById('content');
+
+    const versions = [
+      { name: "1.0.2 - 1.21.11", url: "https://misc.ixvipcs.com/RandomDrops-1.0.2-1.21.11.jar", beta: false },
+      { name: "1.0.1 - 1.21.11-beta", url: "https://misc.ixvipcs.com/RandomDrops-1.0.1-1.21.11-beta.jar", beta: true },
+      { name: "1.0.0 - 1.21.11-beta", url: "https://misc.ixvipcs.com/RandomDrops-1.0.0-1.21.11-beta.jar", beta: true }
+    ];
+
+    function updateVersionOptions() {
+      const showBeta = includeBeta.checked;
+      versionSelect.innerHTML = "";
+      versions.forEach(v => {
+        if (!v.beta || showBeta) {
+          const option = document.createElement("option");
+          option.value = v.url;
+          option.textContent = v.name;
+          versionSelect.appendChild(option);
+        }
+      });
+    }
+
+    openModalBtn.addEventListener('click', () => {
+      modalBg.style.display = 'flex';
+      content.style.filter = 'blur(5px)';
+      updateVersionOptions();
+    });
+
+    closeModalBtn.addEventListener('click', () => {
+      modalBg.style.display = 'none';
+      content.style.filter = 'none';
+    });
+
+    modalBg.addEventListener('click', e => {
+      if (e.target === modalBg) {
+        modalBg.style.display = 'none';
+        content.style.filter = 'none';
+      }
+    });
+
+    downloadBtn.addEventListener('click', () => {
+      const url = versionSelect.value;
+      window.location.href = url;
+    });
+
+    includeBeta.addEventListener('change', updateVersionOptions);
+  </script>
+
+</body>
+</html>
