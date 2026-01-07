@@ -28,21 +28,29 @@
       border-radius: 12px;
       cursor: pointer;
       font-size: 1.1rem;
+      margin-top: 10px;
     }
     button:hover {
       background: #ff1493;
     }
     #output {
-      margin-top: 24px;
-      font-size: 1.3rem;
-      color: #8b008b;
-      white-space: pre-wrap;
+  margin: 24px auto 16px auto; /* top/bottom spacing and auto center */
+  font-size: 1.3rem;
+  color: #8b008b;
+  white-space: pre-wrap; /* preserves line breaks and spacing */
+  text-align: center; /* center the text */
+  max-width: 500px;
+}
+
+    #copyBtn {
+      display: block; /* makes it appear below output */
+      margin: 20px auto 0 auto; /* spacing from output */
     }
   </style>
 </head>
 <body>
   <h1>🐷 Custom Pig Latin Translator 🐷</h1>
-  <textarea id="inputText" rows="4" placeholder="Type your sentence here..."></textarea><br />
+  <textarea id="inputText" rows="6" placeholder="Type your sentence here..."></textarea><br />
   <button onclick="translateSentence()">Translate</button>
 
   <div id="output"></div>
@@ -50,44 +58,54 @@
 
   <script>
     function customPigLatin(word) {
-      const vowels = ['a', 'e', 'i', 'o', 'u'];
-      const lastChar = word[word.length - 1].toLowerCase();
-      const firstChar = word[0].toLowerCase();
+      const vowels = ['a','e','i','o','u'];
+      if(word.length === 0) return word;
 
-      // Start with vowel
-      if (vowels.includes(firstChar)) {
-        if (lastChar === 'y') {
-          return word + 'ay';
-        } else {
-          return word + 'yay';
-        }
-      }
+      const match = word.match(/^(\W*)(\w+)(\W*)$/);
+      if(!match) return word;
+      const startPunct = match[1] || '';
+      const coreWord = match[2] || '';
+      const endPunct = match[3] || '';
 
-      // Start with consonant
-      let moved = word.slice(1) + word[0];
-      const newLastChar = moved[moved.length - 1].toLowerCase();
+      const isCapitalized = coreWord[0] === coreWord[0].toUpperCase();
 
-      if (vowels.includes(newLastChar) && newLastChar !== 'y') {
-        return moved + 'yay';
+      const firstChar = coreWord[0].toLowerCase();
+      const lastChar = coreWord[coreWord.length-1].toLowerCase();
+      let translated = '';
+
+      if(vowels.includes(firstChar)) {
+        if(lastChar === 'y') translated = coreWord + 'ay';
+        else translated = coreWord + 'yay';
       } else {
-        return moved + 'ay';
+        let moved = coreWord.slice(1) + coreWord[0];
+        const newLastChar = moved[moved.length-1].toLowerCase();
+        if(vowels.includes(newLastChar) && newLastChar !== 'y') translated = moved + 'yay';
+        else translated = moved + 'ay';
       }
+
+      if(isCapitalized) translated = translated[0].toUpperCase() + translated.slice(1).toLowerCase();
+
+      return startPunct + translated + endPunct;
     }
 
     function translateSentence() {
       const input = document.getElementById('inputText').value;
-      const words = input.match(/\b\w+\b/g) || [];
-      const translatedWords = words.map(customPigLatin);
-      const output = translatedWords.join(' ');
 
-      document.getElementById('output').innerText = output;
-
-      const copyBtn = document.getElementById('copyBtn');
-      if (output.trim().length > 0) {
-        copyBtn.style.display = 'inline-block';
-      } else {
-        copyBtn.style.display = 'none';
+      if(input.trim() === '') {
+        document.getElementById('output').innerText = '';
+        document.getElementById('copyBtn').style.display = 'none';
+        return;
       }
+
+      const lines = input.split(/\n/);
+      const translatedLines = lines.map(line => {
+        const words = line.split(/(\s+)/);
+        return words.map(word => word.trim() === '' ? word : customPigLatin(word)).join('');
+      });
+
+      const output = translatedLines.join('\n');
+      document.getElementById('output').innerText = output;
+      document.getElementById('copyBtn').style.display = 'inline-block';
     }
 
     function copyOutput() {
@@ -98,12 +116,20 @@
         copyBtn.innerText = 'Copied! ✅';
         setTimeout(() => {
           copyBtn.innerText = 'Copy';
+          document.getElementById('inputText').focus();
         }, 2000);
       }).catch(() => {
         copyBtn.innerText = 'Copy';
         alert('Oops, copy failed 😬');
       });
     }
+
+    document.getElementById('inputText').addEventListener('input', () => {
+      if(document.getElementById('inputText').value.trim() === '') {
+        document.getElementById('output').innerText = '';
+        document.getElementById('copyBtn').style.display = 'none';
+      }
+    });
   </script>
 </body>
 </html>
