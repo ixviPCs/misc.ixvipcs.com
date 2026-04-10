@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Storm Tracker</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(180deg, #06162b, #0b2a4a);
+      color: #ffd000;
+      font-family: Arial;
+    }
+
+    .container {
+      text-align: center;
+      width: 300px;
+    }
+
+    h1 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      color: #ffd000;
+    }
+
+    .display {
+      font-size: 64px;
+      letter-spacing: 6px;
+      margin: 20px 0;
+      color: #ffd000;
+    }
+
+    select, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 16px;
+      border-radius: 8px;
+      border: none;
+    }
+
+    button {
+      background: #ffd000;
+      color: #0b2a4a;
+      font-weight: bold;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .small {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>⚡ Storm Tracker</h1>
+
+  <!-- unit toggle -->
+  <select id="unit">
+    <option value="mi">Miles</option>
+    <option value="km">Kilometers</option>
+  </select>
+
+  <!-- mode toggle -->
+  <select id="mode" onchange="reset()">
+    <option value="tap">Tap Mode</option>
+    <option value="hold">Hold Mode</option>
+  </select>
+
+  <!-- display -->
+  <div class="display" id="display">_ _._</div>
+
+  <!-- button -->
+  <button id="btn"
+    onmousedown="startHold()"
+    onmouseup="stopHold()"
+    ontouchstart="startHold()"
+    ontouchend="stopHold()"
+    onclick="tapThunder()">
+    Lightning / Thunder
+  </button>
+
+  <div class="small">Tap = flash then thunder • Hold = timed strike</div>
+
+</div>
+
+<script>
+let startTime = null;
+let holding = false;
+
+function getSpeedOfSound(tempC = 20) {
+  return 331 + (0.6 * tempC); // m/s
+}
+
+// TAP MODE
+function tapThunder() {
+  if (document.getElementById("mode").value !== "tap") return;
+
+  if (!startTime) {
+    startTime = Date.now();
+    document.getElementById("display").innerText = "_ _._";
+    return;
+  }
+
+  let seconds = (Date.now() - startTime) / 1000;
+  calculate(seconds);
+  startTime = null;
+}
+
+// HOLD MODE
+function startHold() {
+  if (document.getElementById("mode").value !== "hold") return;
+  holding = true;
+  startTime = Date.now();
+  document.getElementById("display").innerText = "0.0";
+}
+
+function stopHold() {
+  if (document.getElementById("mode").value !== "hold") return;
+  if (!holding) return;
+
+  let seconds = (Date.now() - startTime) / 1000;
+  calculate(seconds);
+
+  holding = false;
+  startTime = null;
+}
+
+function calculate(seconds) {
+  let unit = document.getElementById("unit").value;
+
+  let speed = getSpeedOfSound(20); // fixed avg temp for simplicity
+  let meters = seconds * speed;
+
+  let distance = unit === "mi"
+    ? meters / 1609.34
+    : meters / 1000;
+
+  document.getElementById("display").innerText =
+    distance.toFixed(1);
+}
+
+function reset() {
+  startTime = null;
+  holding = false;
+  document.getElementById("display").innerText = "_ _._";
+}
+</script>
+
+</body>
+</html>
